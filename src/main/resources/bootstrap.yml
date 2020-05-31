@@ -1,0 +1,56 @@
+build.version: @project.version@
+brickName: @brick.name@
+spring:
+  application:
+    name: gateway
+  cloud:
+    config:
+      discovery:
+        enabled: true
+        serviceId: config-server
+      failFast: true
+      label: master
+  main:
+    banner-mode: "off"
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${REPLICASET:http://config-server:10103/eureka/}
+logging:
+  level:
+    ROOT: INFO
+  pattern:
+    file: "${brickName}_${spring.application.name} %clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr([%X{transactionId},%X{X-B3-TraceId:-},%X{X-B3-SpanId:-}]){blue}[%thread] %clr(%-5level) %clr(%logger{36}){magenta} - %msg%n"
+    console: "${brickName}_${spring.application.name} %clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr([%X{transactionId},%X{X-B3-TraceId:-},%X{X-B3-SpanId:-}]){blue}[%thread] %clr(%-5level) %clr(%logger{36}){magenta} - %msg%n"
+
+management:
+  endpoint:
+    restart:
+      # required for pause / resume endpoints
+      enabled: true
+    resume:
+      enabled: true
+    pause:
+      enabled: true
+    health:
+      show-details: ALWAYS
+    hystrix:
+      stream:
+        enabled: false
+    # metrics-prometheus integration
+    metrics:
+      enabled: false
+    prometheus:
+      enabled: true
+  endpoints:
+    web:
+      base-path: "/"
+      exposure:
+        include: "*"
+      path-mapping:
+        health: actuator/health
+        info: actuator/info
+        pause: actuator/pause
+        prometheus: metrics
+        restart: actuator/restart
+        resume: actuator/resume
