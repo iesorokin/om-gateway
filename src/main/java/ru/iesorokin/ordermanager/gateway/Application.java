@@ -13,7 +13,6 @@ import org.springframework.retry.annotation.EnableRetry;
 @EnableRetry
 @EnableZuulProxy
 @SpringBootApplication(exclude = RabbitAutoConfiguration.class)
-@ConfigurationPropertiesScan("ru.iesorokin.ordermanager.gateway.config.security")
 @EnableDiscoveryClient
 public class Application {
     public static void main(String[] args) {
